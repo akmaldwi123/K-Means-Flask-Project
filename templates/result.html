@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Means Clustering Result</title>
+</head>
+<body>
+    <h1>K-Means Clustering Result</h1>
+    <p>Number of clusters (k): {{ k_value }}</p>
+    <img src="data:image/png;base64,{{ plot_url }}" alt="K-Means Clustering Result">
+    <table border="1">
+        <tr>
+            <th>Feature 1</th>
+            <th>Feature 2</th>
+            <th>Cluster</th>
+        </tr>
+        {% for row in clustered_data %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

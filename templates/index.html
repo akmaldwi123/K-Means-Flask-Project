@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>K-Means Clustering App</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">K-Means Clustering App</h1>
+        <form method="post" action="/cluster">
+            <div class="form-group">
+                <label for="k">Number of clusters (K):</label>
+                <input type="number" name="k" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Cluster</button>
+        </form>
+
+        {% if table %}
+            <div class="mt-5">
+                {{ table|safe }}
+            </div>
+        {% endif %}
+
+        {% if image %}
+            <div class="mt-5">
+                <img src="data:image/png;base64,{{ image }}" alt="Clustering Plot" class="img-fluid">
+            </div>
+        {% endif %}
+
+        {% if error %}
+            <div class="alert alert-danger mt-4">
+                {{ error }}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
