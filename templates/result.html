@@ -1,27 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        p {
+            margin: 5px 0;
+        }
+
+        img {
+            display: block;
+            margin: 20px auto;
+            max-width: 80%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .cluster-info, .user-cluster {
+            margin-top: 20px;
+        }
+
+        .cluster-info h2, .user-cluster h2 {
+            margin-bottom: 10px;
+        }
+
+        .cluster-info ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .cluster-info li {
+            margin-bottom: 5px;
+        }
+
+        .user-cluster p {
+            margin-bottom: 10px;
+        }
+
+        .user-cluster strong {
+            margin-right: 5px;
+        }
+        .button-container {
+        margin-top: 20px;
+    }
+
+    button {
+        background-color: #4caf50;
+        /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+    </style>
     <title>K-Means Clustering Result</title>
 </head>
+
 <body>
     <h1>K-Means Clustering Result</h1>
-    <p>Number of clusters (k): {{ k_value }}</p>
-    <img src="data:image/png;base64,{{ plot_url }}" alt="K-Means Clustering Result">
-    <table border="1">
+    <p>Number of clusters (k): {{ optimal_k }}</p>
+    <!-- <img src="data:image/png;base64,{{ plot_url }}" alt="K-Means Clustering Result"> -->
+    <div class="elbow-plot">
+        <h2>Elbow Method Plot</h2>
+        <img src="data:image/png;base64,{{ elbow_plot_url }}" alt="Elbow Method Plot">
+    </div>
+    <table>
         <tr>
-            <th>Feature 1</th>
-            <th>Feature 2</th>
+            <th>Name</th>
+            <th>Math</th>
+            <th>English</th>
+            <th>Science</th>
             <th>Cluster</th>
         </tr>
         {% for row in clustered_data %}
-            <tr>
-                <td>{{ row[0] }}</td>
-                <td>{{ row[1] }}</td>
-                <td>{{ row[2] }}</td>
-            </tr>
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>{{ row[4] }}</td>
+        </tr>
         {% endfor %}
     </table>
+    <div class="cluster-info">
+        <h2>Cluster Characteristics</h2>
+        <ul>
+            <li><strong>Kluster 1:</strong> High Math & English</li>
+            <li><strong>Kluster 2:</strong> High Math, Moderate English, High Science</li>
+            <li><strong>Kluster 3:</strong> Balanced Performance</li>
+            <li><strong>Kluster 4:</strong> Low Math, High English, Low Science</li>
+            <li><strong>Kluster 5:</strong> Low Math & English, High Science</li>
+            <li><strong>Kluster 6:</strong> Low Math & English, Low Science</li>
+        </ul>
+    </div>
+    <div class="user-cluster">
+        <h2>Your Data</h2>
+        <p><strong>Name:</strong> {{ clustered_data[-1][0] }}</p>
+        <p><strong>Math:</strong> {{ clustered_data[-1][1] }}</p>
+        <p><strong>English:</strong> {{ clustered_data[-1][2] }}</p>
+        <p><strong>Science:</strong> {{ clustered_data[-1][3] }}</p>
+        <p><strong>Your Cluster:</strong> {{ clustered_data[-1][4] }}</p>
+    </div>
+    <div class="button-container">
+        <form action="/" method="get">
+            <button type="submit">Back to Form</button>
+        </form>
+    </div>
 </body>
+
 </html>
