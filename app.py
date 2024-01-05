@@ -16,28 +16,18 @@ def categorize_cluster(row):
     english_score = row['English']
     science_score = row['Science']
 
-    # Definisikan standar nilai rendah, biasa, dan tinggi sesuai kebutuhan Anda
-    low_threshold = 70
-    high_threshold = 80
+    # Define the thresholds for 'Baik', 'Cukup', and 'Kurang'
+    baik_threshold = 80
+    cukup_threshold_low = 70
 
-    if math_score >= high_threshold and english_score >= high_threshold and science_score >= high_threshold:
-        return 'High Math & English & Science'
-    elif math_score >= high_threshold and english_score >= high_threshold and science_score < high_threshold:
-        return 'High Math & English, Low Science'
-    elif math_score < high_threshold and english_score >= high_threshold and science_score >= high_threshold:
-        return 'Low Math, High English & Science'
-    elif math_score >= high_threshold and english_score < high_threshold and science_score >= high_threshold:
-        return 'High Math, Low English & High Science'
-    elif math_score < high_threshold and english_score < high_threshold and science_score >= high_threshold:
-        return 'Low Math & English, High Science'
-    elif math_score >= high_threshold and english_score < high_threshold and science_score < high_threshold:
-        return 'High Math, Low English & Low Science'
-    elif math_score < high_threshold and english_score >= high_threshold and science_score < high_threshold:
-        return 'Low Math & High English, Low Science'
-    elif math_score < high_threshold and english_score < high_threshold and science_score < high_threshold:
-        return 'Low Math, Low English, Low Science'
+    average_score = (math_score + english_score + science_score) / 3
+
+    if average_score >= baik_threshold:
+        return "Kluster 1"  # Kluster 1: Baik
+    elif cukup_threshold_low <= average_score < baik_threshold:
+        return "Kluster 2"  # Kluster 2: Cukup
     else:
-        return 'Undefined Cluster'
+        return "Kluster 3"  # Kluster 3: Kurang
 
 @app.route('/')
 def index():
@@ -89,7 +79,7 @@ def cluster():
         df['cluster'] = kmeans.fit_predict(df[['Math', 'English', 'Science']]) + 1  # Add 1 to start clusters from 1
 
         # Determine cluster names based on characteristics
-        df['cluster_name'] = df.apply(categorize_cluster, axis=1)
+        df['cluster_number'] = df.apply(categorize_cluster, axis=1)
 
         # Plot clustering results
         plt.scatter(df['Math'], df['English'], c=df['cluster'], cmap='rainbow')
@@ -105,21 +95,14 @@ def cluster():
         img_base64_result = base64.b64encode(img_data.read()).decode('utf-8')
 
         # Prepare data for display on the result page
-        clustered_data = df[['Name', 'Math', 'English', 'Science', 'cluster_name']].values.tolist()
+        clustered_data = df[['Name', 'Math', 'English', 'Science', 'cluster_number']].values.tolist()
         cluster_assignments = df['cluster'].values.tolist()
 
-        # Create a dictionary to map cluster numbers to characteristics
-        cluster_characteristics = {
-            1: 'High Math & English & Science',
-            2: 'High Math, Moderate English, High Science',
-            3: 'Balanced Performance',
-            4: 'Low Math, High English, Low Science',
-            5: 'Low Math & English, High Science',
-            6: 'Low Math & English, Low Science'
-        }
+        # Create a list to map cluster numbers to characteristics
+        cluster_characteristics = ['Baik', 'Cukup', 'Kurang']
 
-        # Map cluster numbers to characteristics
-        df['cluster_characteristics'] = df['cluster'].map(cluster_characteristics)
+        # Map cluster names to characteristics
+        df['cluster_characteristics'] = df['cluster_number'].map(dict(zip(range(1, len(cluster_characteristics) + 1), cluster_characteristics)))
 
         return render_template('result.html', elbow_plot_url=img_base64_elbow, plot_url=img_base64_result, clustered_data=clustered_data, cluster_assignments=cluster_assignments, optimal_k=optimal_k, cluster_characteristics=df['cluster_characteristics'].tolist())
 
